@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF 페이지 추출기</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PDF 페이지 추출기</h1>
+            <p>PDF 파일을 업로드하고 원하는 페이지만 선택하여 새로운 PDF로 저장하세요. 모든 작업은 클라이언트에서 안전하게 처리됩니다.</p>
+        </header>
+
+        <main>
+            <div id="upload-zone" class="upload-zone">
+                <input type="file" id="pdf-upload" accept="application/pdf" hidden>
+                <div class="upload-content">
+                    <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <p>이곳을 클릭하거나 PDF 파일을 드래그하여 업로드하세요</p>
+                    <span class="file-limit">최대 권장 용량: 50MB (기기 성능에 따라 다름)</span>
+                </div>
+            </div>
+
+            <div id="workspace" class="workspace hidden">
+                <div class="toolbar">
+                    <div class="file-info">
+                        <span id="filename">document.pdf</span>
+                        <span id="file-meta">(10 pages, 2.5MB)</span>
+                    </div>
+                    <div class="actions">
+                        <button id="btn-select-all" class="btn secondary">전체 선택</button>
+                        <button id="btn-deselect-all" class="btn secondary">전체 해제</button>
+                        <button id="btn-download" class="btn primary" disabled>선택한 페이지 다운로드 (<span id="selected-count">0</span>)</button>
+                        <button id="btn-reset" class="btn danger">새 파일</button>
+                    </div>
+                </div>
+
+                <div id="loading-indicator" class="loading-indicator hidden">
+                    <div class="spinner"></div>
+                    <p id="loading-text">PDF 불러오는 중...</p>
+                </div>
+
+                <div id="page-grid" class="page-grid">
+                    <!-- Page cards will be injected here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
