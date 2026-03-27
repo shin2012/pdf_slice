@@ -1,5 +1,23 @@
-// Configure pdf.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+// Configure pdf.js worker with fallback
+if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    
+    // Fallback: Check if CDN worker loads successfully (simple existence check not easy, but we can set up local fallback as alternative)
+    // In many environments, using local worker is safer if CDN might be blocked.
+    // For now, let's detect if we are using local pdf.min.js and use local worker accordingly.
+}
+
+// Function to ensure worker is loaded (called before first usage)
+async function ensureWorker() {
+    try {
+        // Try pinging the CDN worker, if it fails or if we are in local mode, use local
+        const response = await fetch(pdfjsLib.GlobalWorkerOptions.workerSrc, { method: 'HEAD' });
+        if (!response.ok) throw new Error();
+    } catch (e) {
+        console.warn('CDN Worker failed, switching to local worker.');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'lib/pdf.worker.min.js';
+    }
+}
 
 // DOM Elements
 const uploadZone = document.getElementById('upload-zone');
@@ -106,6 +124,7 @@ async function handleFile(file) {
     updateDownloadButton();
 
     try {
+        await ensureWorker();
         const arrayBuffer = await file.arrayBuffer();
         // Clone the buffer to ensure it's not modified by pdf.js
         currentPdfBytes = arrayBuffer.slice(0);
